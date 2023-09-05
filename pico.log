@@ -1,0 +1,23 @@
+
+05-Sep-23 16:35:22 - root - INFO - Connection to Broker Succesfull!
+05-Sep-23 16:35:22 - root - INFO - Following Audio Devices were detected
+05-Sep-23 16:35:22 - root - INFO - Device 0: Discard all samples (playback) or generate zero samples (capture)
+05-Sep-23 16:35:22 - root - INFO - Device 1: ReSpeaker 4 Mic Array (UAC1.0), USB Audio
+05-Sep-23 16:35:22 - root - INFO - Started by a user or deamon
+05-Sep-23 18:03:03 - root - INFO - Started by a user or deamon
+05-Sep-23 18:03:03 - root - INFO - Connection to Broker Succesfull!
+05-Sep-23 18:03:03 - root - INFO - Following Audio Devices were detected
+05-Sep-23 18:03:03 - root - INFO - Device 0: Discard all samples (playback) or generate zero samples (capture)
+05-Sep-23 18:03:03 - root - INFO - Device 1: ReSpeaker 4 Mic Array (UAC1.0), USB Audio
+05-Sep-23 18:03:52 - root - INFO - Started by a user or deamon
+05-Sep-23 18:03:52 - root - INFO - Connection to Broker Succesfull!
+05-Sep-23 18:03:52 - root - INFO - Following Audio Devices were detected
+05-Sep-23 18:03:52 - root - INFO - Device 0: Discard all samples (playback) or generate zero samples (capture)
+05-Sep-23 18:03:52 - root - INFO - Device 1: ReSpeaker 4 Mic Array (UAC1.0), USB Audio
+05-Sep-23 18:03:55 - root - INFO - Wake on Word detcted!
+05-Sep-23 18:03:57 - root - INFO - Intent detected:
+05-Sep-23 18:03:57 - root - INFO - ändereZustand
+05-Sep-23 18:03:57 - root - INFO - and following slots:
+05-Sep-23 18:03:57 - root - INFO - {'zustand': 'an'}
+05-Sep-23 18:03:57 - root - INFO - Zustand:
+05-Sep-23 18:03:57 - root - INFO - an
