@@ -1,0 +1,11 @@
+time
+pixel_ring
+json
+sys
+paho.mqtt.client
+logging
+os
+distro
+Picovoice
+PvRecorder
+zahlwort2num
