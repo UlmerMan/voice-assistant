@@ -1,5 +1,3 @@
-from picovoice import Picovoice
-from pvrecorder import PvRecorder
 import time
 from pixel_ring import pixel_ring
 import json
@@ -9,6 +7,11 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import distro
+from picovoice import Picovoice
+from pvrecorder import PvRecorder
+import zahlwort2num
+
+z2n = zahlwort2num
 
 handler = RotatingFileHandler(
     '/home/pi/voice-assistant/pico.log',
@@ -50,12 +53,8 @@ ACCESS_KEY = 'UHqNPD8rCVOJsH8MYks3vchv5xqoWWiE7j7cSPgyJDjrIkTP5mq1uw=='
 # wake word detected
 def wake_word_callback():
    logging.info("Wake on Word detcted!")
+   pixel_ring.set_brightness(30)
    pixel_ring.speak()
-   i = 0
-   while(i<50):
-      pixel_ring.set_brightness(i)
-      time.sleep(0.01)
-      i += 1
 
 
 def inference_callback(inference):
@@ -68,24 +67,87 @@ def inference_callback(inference):
       logging.info(intent)
       logging.info("and following slots:")
       logging.info(slots)
-      if intent == 'ändereZustand':
+      if intent == 'lichter':
          out = json.loads(json.dumps(slots))
          logging.info("Zustand:")
          logging.info(out['zustand'])
-         if out['zustand'] == 'an':
-            client.publish("main/hm/manuel/licht/test", "1")
-         if out['zustand'] == 'aus':
-            client.publish("main/hm/manuel/licht/test", "0")
-      if intent == 'stoppen':
+         logging.info('Ort:')
+         logging.info(out['ort'])
+         if out['ort']:
+            if out['ort'] == 'mitte':
+               if out['zustand'] == 'an':
+                  client.publish("main/hm/manuel/licht/panel", "1")
+               elif out['zustand'] == 'aus':
+                  client.publish("main/hm/manuel/licht/panel", "0")
+               else:
+                  logging.warning("failed to understand Zustand")
+                  pixel_ring.off()
+                  return 0
+            if out['ort'] == 'süd':
+               if out['zustand'] == 'an':
+                  client.publish("main/hm/manuel/licht/süd", "1")
+               elif out['zustand'] == 'aus':
+                  client.publish("main/hm/manuel/licht/süd", "0")
+               else:
+                  logging.warning("failed to understand Zustand")
+                  pixel_ring.off()
+                  return 0
+            if out['ort'] == 'nord':
+               if out['zustand'] == 'an':
+                  client.publish("main/hm/manuel/licht/nord", "1")
+               elif out['zustand'] == 'aus':
+                  client.publish("main/hm/manuel/licht/nord", "0")
+               else:
+                  logging.warning("failed to understand Zustand")
+                  pixel_ring.off()
+                  return 0
+            if out['ort'] == 'bett':
+               if out['zustand'] == 'an':
+                  client.publish("main/hm/manuel/licht/bett", "1")
+               elif out['zustand'] == 'aus':
+                  client.publish("main/hm/manuel/licht/bett", "0")
+               else:
+                  logging.warning("failed to understand Zustand")
+                  pixel_ring.off()
+                  return 0
+            else:
+               logging.warning("failed to understand Ort")
+               pixel_ring.off()
+               return 0
+         else:
+            if out['zustand'] == 'an':
+               client.publish("main/hm/manuel/licht/panel", "1")
+            elif out['zustand'] == 'aus':
+               client.publish("main/hm/manuel/licht/panel", "0")
+            else:
+               logging.warning("failed to understand Zustand")
+               pixel_ring.off()
+               return 0
+      if intent == 'stopen':
+         pixel_ring.off()
          logging.warning('System has been shutdown by the user')
          os.system("sudo shutdown +1")
-         sys.exit()
-      i = 50
-      while(i>0):
-         pixel_ring.set_brightness(i)
-         time.sleep(0.01)
-         i -= 1
+         sys.exit(0)
+      if intent == 'rolladen':
+         out = json.loads(json.dumps(slots))
+         logging.info("Zustand:")
+         logging.info(out['zustand'])
+         if out['zustand'] == 'auf':
+            client.publish("main/hm/manuel/rolladen", "100")
+         elif out['zustand'] == 'zu':
+            client.publish("main/hm/manuel/rolladen", "0")
+         elif out['zustand'] == 'hoch':
+            client.publish("main/hm/manuel/rolladen", "100")
+         elif out['zustand'] == 'runter':
+            client.publish("main/hm/manuel/rolladen", "0")
+         elif z2n.convert(out['zustand']):
+            client.publish("main/hm/manuel/rolladen", z2n.convert(out['zustand']))
+         else:
+            logging.info("failed to understand Zustand")
+            pixel_ring.off()
+            return 0
       pixel_ring.off()
+      return 0
    else:
       i = 50
       while(i>0):
@@ -98,7 +160,6 @@ if distro.id() == "raspbian":
    contextfile = '/home/pi/voice-assistant/Licht_de_raspberry-pi_v2_2_0.rhn'
 else:
    keywordfile = 'Hey-Computer_de_linux_v2_2_0.ppn'
-   contextfile = 'Licht_de_linux_v2_2_0.rhn'
 picovoice = Picovoice(
      access_key=ACCESS_KEY,
      keyword_path=keywordfile,
