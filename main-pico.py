@@ -50,12 +50,19 @@ def on_disconnect():
 client.on_disconnect = on_disconnect
 
 ACCESS_KEY = 'UHqNPD8rCVOJsH8MYks3vchv5xqoWWiE7j7cSPgyJDjrIkTP5mq1uw=='
+
+rolladenZustanddict = {
+   "auf": 100,
+   "zu": 0,
+   "hoch": 100,
+   "runter": 0,
+}
+
 # wake word detected
 def wake_word_callback():
    logging.info("Wake on Word detcted!")
    pixel_ring.set_brightness(30)
    pixel_ring.speak()
-
 
 def inference_callback(inference):
    if inference.is_understood:
@@ -132,14 +139,9 @@ def inference_callback(inference):
          out = json.loads(json.dumps(slots))
          logging.info("Zustand:")
          logging.info(out['zustand'])
-         if out['zustand'] == 'auf':
-            client.publish("main/hm/manuel/rolladen", "100")
-         elif out['zustand'] == 'zu':
-            client.publish("main/hm/manuel/rolladen", "0")
-         elif out['zustand'] == 'hoch':
-            client.publish("main/hm/manuel/rolladen", "100")
-         elif out['zustand'] == 'runter':
-            client.publish("main/hm/manuel/rolladen", "0")
+         if out['zustand'] in rolladenZustanddict:
+            logging.info(rolladenZustanddict[out['zustand']])
+            client.publish("main/hm/manuel/rolladen", rolladenZustanddict[out['zustand']])
          elif z2n.convert(out['zustand']):
             client.publish("main/hm/manuel/rolladen", z2n.convert(out['zustand']))
          else:
